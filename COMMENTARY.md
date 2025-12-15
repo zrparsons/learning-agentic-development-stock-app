@@ -67,3 +67,10 @@ Once again copy pasted the compilation errors from my shell and it once again ga
 
 ## Manual Fixes:
 Manually fixed the compilation errors. most boiled down to incorrect imports or a file being in the wrong place. the app now runs and seems to work more or less as expected.
+
+## Prompt 4:
+>products should not be limited to a single user and should be available to be edited and updated by any user
+
+So it did a reasonable job of this but i think i have hit my first major snag with this. on of the imports i added to fix a compilation error has been removed again which causes the compilation error again.
+
+I gave it the compilation error and it babbled some nonsense about the method being out of scope and simple re-ordered some code which fixed nothing. I guess for me this is an opportunity to play with some of the numerous ways to insert extra context into the model.

@@ -1,12 +1,9 @@
 package com.stockapp.routes
 
-import com.auth0.jwt.JWT
 import com.stockapp.models.*
-import com.stockapp.services.AuthService
 import com.stockapp.services.ProductService
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
-import io.ktor.server.auth.jwt.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -17,12 +14,7 @@ fun Route.productRoutes(productService: ProductService) {
         authenticate("auth-jwt") {
             get {
                 try {
-                    val principal = call.principal<JWTPrincipal>()
-                    val userIdString = principal?.payload?.getClaim("userId")?.asString()
-                        ?: throw Exception("User ID not found in token")
-                    val userId = UUID.fromString(userIdString)
-                    
-                    val products = productService.getAllProducts(userId)
+                    val products = productService.getAllProducts()
                     call.respond(products.map { 
                         ProductResponse(
                             id = it.id.toString(),
@@ -30,8 +22,7 @@ fun Route.productRoutes(productService: ProductService) {
                             description = it.description,
                             price = it.price.toDouble(),
                             createdAt = it.createdAt.toString(),
-                            updatedAt = it.updatedAt.toString(),
-                            userId = it.userId.toString()
+                            updatedAt = it.updatedAt.toString()
                         )
                     })
                 } catch (e: Exception) {
@@ -44,15 +35,10 @@ fun Route.productRoutes(productService: ProductService) {
             
             get("{id}") {
                 try {
-                    val principal = call.principal<JWTPrincipal>()
-                    val userIdString = principal?.payload?.getClaim("userId")?.asString()
-                        ?: throw Exception("User ID not found in token")
-                    val userId = UUID.fromString(userIdString)
-                    
                     val id = call.parameters["id"] ?: throw Exception("Product ID is required")
                     val productId = UUID.fromString(id)
                     
-                    val product = productService.getProductById(productId, userId)
+                    val product = productService.getProductById(productId)
                     if (product == null) {
                         call.respond(
                             io.ktor.http.HttpStatusCode.NotFound,
@@ -68,8 +54,7 @@ fun Route.productRoutes(productService: ProductService) {
                             description = product.description,
                             price = product.price.toDouble(),
                             createdAt = product.createdAt.toString(),
-                            updatedAt = product.updatedAt.toString(),
-                            userId = product.userId.toString()
+                            updatedAt = product.updatedAt.toString()
                         )
                     )
                 } catch (e: IllegalArgumentException) {
@@ -87,11 +72,6 @@ fun Route.productRoutes(productService: ProductService) {
             
             post {
                 try {
-                    val principal = call.principal<JWTPrincipal>()
-                    val userIdString = principal?.payload?.getClaim("userId")?.asString()
-                        ?: throw Exception("User ID not found in token")
-                    val userId = UUID.fromString(userIdString)
-                    
                     val request = call.receive<ProductCreateRequest>()
                     
                     if (request.name.isBlank() || request.description.isBlank()) {
@@ -116,7 +96,7 @@ fun Route.productRoutes(productService: ProductService) {
                         price = java.math.BigDecimal.valueOf(request.price)
                     )
                     
-                    val result = productService.createProduct(createRequest, userId)
+                    val result = productService.createProduct(createRequest)
                     result.fold(
                         onSuccess = { product ->
                             call.respond(
@@ -127,8 +107,7 @@ fun Route.productRoutes(productService: ProductService) {
                                     description = product.description,
                                     price = product.price.toDouble(),
                                     createdAt = product.createdAt.toString(),
-                                    updatedAt = product.updatedAt.toString(),
-                                    userId = product.userId.toString()
+                                    updatedAt = product.updatedAt.toString()
                                 )
                             )
                         },
@@ -149,11 +128,6 @@ fun Route.productRoutes(productService: ProductService) {
             
             put("{id}") {
                 try {
-                    val principal = call.principal<JWTPrincipal>()
-                    val userIdString = principal?.payload?.getClaim("userId")?.asString()
-                        ?: throw Exception("User ID not found in token")
-                    val userId = UUID.fromString(userIdString)
-                    
                     val id = call.parameters["id"] ?: throw Exception("Product ID is required")
                     val productId = UUID.fromString(id)
                     
@@ -181,7 +155,7 @@ fun Route.productRoutes(productService: ProductService) {
                         price = request.price?.let { java.math.BigDecimal.valueOf(it) }
                     )
                     
-                    val result = productService.updateProduct(productId, updateRequest, userId)
+                    val result = productService.updateProduct(productId, updateRequest)
                     result.fold(
                         onSuccess = { product ->
                             call.respond(
@@ -191,8 +165,7 @@ fun Route.productRoutes(productService: ProductService) {
                                     description = product.description,
                                     price = product.price.toDouble(),
                                     createdAt = product.createdAt.toString(),
-                                    updatedAt = product.updatedAt.toString(),
-                                    userId = product.userId.toString()
+                                    updatedAt = product.updatedAt.toString()
                                 )
                             )
                         },
@@ -218,15 +191,10 @@ fun Route.productRoutes(productService: ProductService) {
             
             delete("{id}") {
                 try {
-                    val principal = call.principal<JWTPrincipal>()
-                    val userIdString = principal?.payload?.getClaim("userId")?.asString()
-                        ?: throw Exception("User ID not found in token")
-                    val userId = UUID.fromString(userIdString)
-                    
                     val id = call.parameters["id"] ?: throw Exception("Product ID is required")
                     val productId = UUID.fromString(id)
                     
-                    val result = productService.deleteProduct(productId, userId)
+                    val result = productService.deleteProduct(productId)
                     result.fold(
                         onSuccess = {
                             call.respond(io.ktor.http.HttpStatusCode.NoContent)

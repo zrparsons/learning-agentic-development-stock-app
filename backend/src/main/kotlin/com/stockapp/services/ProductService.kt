@@ -3,15 +3,14 @@ package com.stockapp.services
 import com.stockapp.database.Products
 import com.stockapp.models.*
 import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.time.LocalDateTime
 import java.util.UUID
 
 class ProductService {
-    fun getAllProducts(userId: UUID): List<Product> {
+    fun getAllProducts(): List<Product> {
         return transaction {
-            Products.select { Products.userId eq userId }
+            Products.selectAll()
                 .map { row ->
                     Product(
                         id = row[Products.id],
@@ -19,32 +18,29 @@ class ProductService {
                         description = row[Products.description],
                         price = row[Products.price],
                         createdAt = row[Products.createdAt],
-                        updatedAt = row[Products.updatedAt],
-                        userId = row[Products.userId]
+                        updatedAt = row[Products.updatedAt]
                     )
                 }
         }
     }
     
-    fun getProductById(id: UUID, userId: UUID): Product? {
+    fun getProductById(id: UUID): Product? {
         return transaction {
-            Products.select { 
-                (Products.id eq id) and (Products.userId eq userId)
-            }.map { row ->
-                Product(
-                    id = row[Products.id],
-                    name = row[Products.name],
-                    description = row[Products.description],
-                    price = row[Products.price],
-                    createdAt = row[Products.createdAt],
-                    updatedAt = row[Products.updatedAt],
-                    userId = row[Products.userId]
-                )
-            }.firstOrNull()
+            Products.select { Products.id eq id }
+                .map { row ->
+                    Product(
+                        id = row[Products.id],
+                        name = row[Products.name],
+                        description = row[Products.description],
+                        price = row[Products.price],
+                        createdAt = row[Products.createdAt],
+                        updatedAt = row[Products.updatedAt]
+                    )
+                }.firstOrNull()
         }
     }
     
-    fun createProduct(request: ProductCreateRequestInternal, userId: UUID): Result<Product> {
+    fun createProduct(request: ProductCreateRequestInternal): Result<Product> {
         return try {
             transaction {
                 val productId = UUID.randomUUID()
@@ -53,7 +49,6 @@ class ProductService {
                     it[Products.name] = request.name
                     it[Products.description] = request.description
                     it[Products.price] = request.price
-                    it[Products.userId] = userId
                 }
                 
                 val product = Products.select { Products.id eq productId }.map { row ->
@@ -63,8 +58,7 @@ class ProductService {
                         description = row[Products.description],
                         price = row[Products.price],
                         createdAt = row[Products.createdAt],
-                        updatedAt = row[Products.updatedAt],
-                        userId = row[Products.userId]
+                        updatedAt = row[Products.updatedAt]
                     )
                 }.first()
                 
@@ -75,18 +69,16 @@ class ProductService {
         }
     }
     
-    fun updateProduct(id: UUID, request: ProductUpdateRequestInternal, userId: UUID): Result<Product> {
+    fun updateProduct(id: UUID, request: ProductUpdateRequestInternal): Result<Product> {
         return try {
             transaction {
-                val existingProduct = Products.select { 
-                    (Products.id eq id) and (Products.userId eq userId)
-                }.firstOrNull()
+                val existingProduct = Products.select { Products.id eq id }.firstOrNull()
                 
                 if (existingProduct == null) {
                     return@transaction Result.failure(Exception("Product not found"))
                 }
                 
-                Products.update({ (Products.id eq id) and (Products.userId eq userId) }) {
+                Products.update({ Products.id eq id }) {
                     request.name?.let { name -> it[Products.name] = name }
                     request.description?.let { description -> it[Products.description] = description }
                     request.price?.let { price -> it[Products.price] = price }
@@ -100,8 +92,7 @@ class ProductService {
                         description = row[Products.description],
                         price = row[Products.price],
                         createdAt = row[Products.createdAt],
-                        updatedAt = row[Products.updatedAt],
-                        userId = row[Products.userId]
+                        updatedAt = row[Products.updatedAt]
                     )
                 }.first()
                 
@@ -112,12 +103,10 @@ class ProductService {
         }
     }
     
-    fun deleteProduct(id: UUID, userId: UUID): Result<Unit> {
+    fun deleteProduct(id: UUID): Result<Unit> {
         return try {
             transaction {
-                val deleted = Products.deleteWhere {
-                    (Products.id eq id) and (Products.userId eq userId)
-                }
+                val deleted = Products.deleteWhere { Products.id eq id }
                 
                 if (deleted == 0) {
                     return@transaction Result.failure(Exception("Product not found"))

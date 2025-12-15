@@ -2,7 +2,6 @@ package com.stockapp.database
 
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.javatime.datetime
-import org.jetbrains.exposed.sql.ReferenceOption
 import java.time.LocalDateTime
 
 object Users : Table("users") {
@@ -22,7 +21,6 @@ object Products : Table("products") {
     val price = decimal("price", 10, 2)
     val createdAt = datetime("created_at").default(LocalDateTime.now())
     val updatedAt = datetime("updated_at").default(LocalDateTime.now())
-    val userId = uuid("user_id").references(Users.id, onDelete = ReferenceOption.CASCADE)
     
     override val primaryKey = PrimaryKey(id)
 }

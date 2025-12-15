@@ -11,8 +11,7 @@ data class Product(
     val description: String,
     val price: BigDecimal,
     val createdAt: LocalDateTime,
-    val updatedAt: LocalDateTime,
-    val userId: UUID
+    val updatedAt: LocalDateTime
 )
 
 @Serializable
@@ -49,7 +48,6 @@ data class ProductResponse(
     val description: String,
     val price: Double,
     val createdAt: String,
-    val updatedAt: String,
-    val userId: String
+    val updatedAt: String
 )
 
