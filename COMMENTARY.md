@@ -64,3 +64,6 @@ For this prompt i copied the many compilation errors from my terminal i into the
 
 ## Prompt 3:
 Once again copy pasted the compilation errors from my shell and it once again gave an output that didn't compile. This was due to it refusing to fix one of the errors in the list and it simply hallucinating an import that was wrong and unnecessary. From here i decided i will just need to manually fix these errors.
+
+## Manual Fixes:
+Manually fixed the compilation errors. most boiled down to incorrect imports or a file being in the wrong place. the app now runs and seems to work more or less as expected.

@@ -3,8 +3,8 @@ package com.stockapp.services
 import com.stockapp.database.Products
 import com.stockapp.models.*
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
-import java.math.BigDecimal
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -115,7 +115,7 @@ class ProductService {
     fun deleteProduct(id: UUID, userId: UUID): Result<Unit> {
         return try {
             transaction {
-                val deleted = Products.deleteWhere { 
+                val deleted = Products.deleteWhere {
                     (Products.id eq id) and (Products.userId eq userId)
                 }
                 

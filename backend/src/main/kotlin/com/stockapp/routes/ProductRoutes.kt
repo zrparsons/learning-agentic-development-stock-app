@@ -12,7 +12,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import java.util.UUID
 
-fun Route.productRoutes(productService: ProductService, authService: AuthService) {
+fun Route.productRoutes(productService: ProductService) {
     route("/api/products") {
         authenticate("auth-jwt") {
             get {

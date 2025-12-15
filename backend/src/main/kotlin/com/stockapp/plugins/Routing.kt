@@ -13,7 +13,7 @@ fun Application.configureRouting() {
     
     routing {
         authRoutes(authService)
-        productRoutes(productService, authService)
+        productRoutes(productService)
     }
 }
 
