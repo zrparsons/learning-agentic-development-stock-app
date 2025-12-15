@@ -49,10 +49,10 @@ class ProductService {
             transaction {
                 val productId = UUID.randomUUID()
                 Products.insert {
-                    it[id] = productId
-                    it[name] = request.name
-                    it[description] = request.description
-                    it[price] = request.price
+                    it[Products.id] = productId
+                    it[Products.name] = request.name
+                    it[Products.description] = request.description
+                    it[Products.price] = request.price
                     it[Products.userId] = userId
                 }
                 
@@ -90,7 +90,7 @@ class ProductService {
                     request.name?.let { name -> it[Products.name] = name }
                     request.description?.let { description -> it[Products.description] = description }
                     request.price?.let { price -> it[Products.price] = price }
-                    it[updatedAt] = LocalDateTime.now()
+                    it[Products.updatedAt] = LocalDateTime.now()
                 }
                 
                 val product = Products.select { Products.id eq id }.map { row ->

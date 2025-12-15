@@ -50,3 +50,14 @@ To start out this project i am creating an initial commit containing this file a
 ### Manual changes
 - i pulled the backend into IntelliJ so i could scrutinize it a bit better. Which wound up running a gradle init and generating some supporting gradle files.
 - i created a `.gitignore` to ignore files i don't want tracked.
+
+## Prompt 2:
+For this prompt i copied the many compilation errors from my terminal i into the model
+
+### The good
+- It seemed to realize a few of its mistakes, added a missing import, removed a redeclaration of the same object in separate files (problem with * imports).
+
+### The bad
+- Made some random changes around defaults and in other places.
+- left an unused import.
+- Still doesn't compile.

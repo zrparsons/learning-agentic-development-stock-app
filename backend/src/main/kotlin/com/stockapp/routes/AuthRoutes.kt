@@ -6,10 +6,6 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import kotlinx.serialization.Serializable
-
-@Serializable
-data class ErrorResponse(val error: String)
 
 fun Route.authRoutes(authService: AuthService) {
     route("/api/auth") {

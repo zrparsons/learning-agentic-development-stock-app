@@ -34,9 +34,9 @@ class AuthService {
                 // Create user
                 val userId = UUID.randomUUID()
                 Users.insert {
-                    it[id] = userId
-                    it[username] = request.username
-                    it[email] = request.email
+                    it[Users.id] = userId
+                    it[Users.username] = request.username
+                    it[Users.email] = request.email
                     it[Users.passwordHash] = passwordHash
                 }
                 

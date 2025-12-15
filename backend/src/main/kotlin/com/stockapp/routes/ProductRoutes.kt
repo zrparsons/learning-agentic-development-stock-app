@@ -10,11 +10,7 @@ import io.ktor.server.auth.jwt.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import kotlinx.serialization.Serializable
 import java.util.UUID
-
-@Serializable
-data class ErrorResponse(val error: String)
 
 fun Route.productRoutes(productService: ProductService, authService: AuthService) {
     route("/api/products") {
