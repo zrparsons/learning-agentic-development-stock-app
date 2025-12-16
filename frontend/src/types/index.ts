@@ -15,9 +15,10 @@ export interface Product {
   description: string;
   price: number;
   stockCount: number;
+  createdBy: string;
+  updatedBy: string;
   createdAt: string;
   updatedAt: string;
-  userId: string;
 }
 
 export interface ProductCreateRequest {

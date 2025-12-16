@@ -117,3 +117,8 @@ WHERE created_by IS NULL;
 Maybe that second comment is a recommendation for me but it does a poor job of explaining that.
 
 One of the strange things its telling me to do is to dropped the failed migration from the database. Which in my opinion is both uneccicary and a poor decision. That record is there to show a history of the migrations that this thing attempted to apply, we really should not be touching that. I guess it would be fine to do locally but it is also completely uneccicary to do locally so i don't like that recommendation.
+
+## Update 9
+While testing the previous change i discoverd that i am getting logged out on refresh. It seems we are pulling the user information out of state on every refresh which is is taking some time and in that time the route things im unauthenticated and sends me back to the login page.
+
+The solution was to return a wait and then block until this is loaded out of state. again i don't know react well enough to comment on this but seems a little iffy.
