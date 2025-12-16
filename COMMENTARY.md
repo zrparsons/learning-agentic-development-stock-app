@@ -123,5 +123,12 @@ While testing the previous change i discoverd that i am getting logged out on re
 
 The solution was to return a wait and then block until this is loaded out of state. again i don't know react well enough to comment on this but seems a little iffy.
 
+ADDENDUM: this is actually pretty scuffed See update 11.
+
 ## Update 10
 Adding the previous created by and updated by functionality to the frontend. Had to hold its hand a bit on this one because it kept trying to insert loads of user data into the product response but eventually it spat out a fairly reasonable answer.
+
+## Update 11
+Looking at the auth provider with fresh eyes on a new day. we shouldn't be loading credentials in a use effect, thats whats silly. It should be loading the credentials inside the provider and using them to initialize the state.
+
+It did a decent job of fixing this, however instead of removing the isLoading state it kept it and hard locked it to false which is super scuffed. It fixed it when asked but still strange. I am amazed both by the things the model is able to get correct and by the things the model can get wrong, its very odd.

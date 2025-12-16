@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { authAPI } from '../services/api';
 import type { User } from '../types';
 
@@ -9,25 +9,31 @@ interface AuthContextType {
   register: (username: string, email: string, password: string) => Promise<void>;
   logout: () => void;
   isAuthenticated: boolean;
-  isLoading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [token, setToken] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
+// Load credentials from localStorage on initialization
+const loadStoredCredentials = (): { token: string | null; user: User | null } => {
+  try {
     const storedToken = localStorage.getItem('token');
     const storedUser = localStorage.getItem('user');
     if (storedToken && storedUser) {
-      setToken(storedToken);
-      setUser(JSON.parse(storedUser));
+      return {
+        token: storedToken,
+        user: JSON.parse(storedUser),
+      };
     }
-    setIsLoading(false);
-  }, []);
+  } catch (error) {
+    console.error('Failed to load stored credentials:', error);
+  }
+  return { token: null, user: null };
+};
+
+export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const [credentials] = useState(() => loadStoredCredentials());
+  const [user, setUser] = useState<User | null>(credentials.user);
+  const [token, setToken] = useState<string | null>(credentials.token);
 
   const login = async (email: string, password: string) => {
     const response = await authAPI.login(email, password);
@@ -57,7 +63,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     register,
     logout,
     isAuthenticated: !!token,
-    isLoading,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
