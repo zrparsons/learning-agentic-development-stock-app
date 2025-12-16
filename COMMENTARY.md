@@ -122,3 +122,6 @@ One of the strange things its telling me to do is to dropped the failed migratio
 While testing the previous change i discoverd that i am getting logged out on refresh. It seems we are pulling the user information out of state on every refresh which is is taking some time and in that time the route things im unauthenticated and sends me back to the login page.
 
 The solution was to return a wait and then block until this is loaded out of state. again i don't know react well enough to comment on this but seems a little iffy.
+
+## Update 10
+Adding the previous created by and updated by functionality to the frontend. Had to hold its hand a bit on this one because it kept trying to insert loads of user data into the product response but eventually it spat out a fairly reasonable answer.

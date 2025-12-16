@@ -64,5 +64,12 @@ export const productAPI = {
   },
 };
 
+export const userAPI = {
+  getById: async (id: string): Promise<User> => {
+    const response = await api.get<User>(`/users/${id}`);
+    return response.data;
+  },
+};
+
 export default api;
 

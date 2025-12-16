@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { productAPI } from '../services/api';
+import { productAPI, userAPI } from '../services/api';
 import type { Product } from '../types';
 import './ProductList.css';
 
@@ -9,6 +9,7 @@ const ProductList: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [userCache, setUserCache] = useState<Map<string, string>>(new Map());
   const { logout, user } = useAuth();
   const navigate = useNavigate();
 
@@ -22,6 +23,31 @@ const ProductList: React.FC = () => {
       const data = await productAPI.getAll();
       setProducts(data);
       setError('');
+      
+      // Extract unique user IDs from products
+      const userIds = new Set<string>();
+      data.forEach(product => {
+        userIds.add(product.createdBy);
+        userIds.add(product.updatedBy);
+      });
+      
+      // Fetch usernames for all unique user IDs in parallel
+      const userPromises = Array.from(userIds).map(async (userId) => {
+        try {
+          const userData = await userAPI.getById(userId);
+          return { userId, username: userData.username };
+        } catch (err) {
+          console.error(`Failed to fetch user ${userId}:`, err);
+          return { userId, username: userId.substring(0, 8) }; // Fallback to abbreviated ID
+        }
+      });
+      
+      const userResults = await Promise.all(userPromises);
+      const newUserCache = new Map<string, string>();
+      userResults.forEach(({ userId, username }) => {
+        newUserCache.set(userId, username);
+      });
+      setUserCache(newUserCache);
     } catch (err: any) {
       setError(err.response?.data?.error || 'Failed to load products');
     } finally {
@@ -55,6 +81,19 @@ const ProductList: React.FC = () => {
       month: 'short',
       day: 'numeric',
     });
+  };
+
+  const getUsernameDisplay = (userId: string) => {
+    const username = userCache.get(userId);
+    if (!username) {
+      return 'Loading...';
+    }
+    return username === user?.username ? 'You' : username;
+  };
+
+  const isCurrentUser = (userId: string) => {
+    const username = userCache.get(userId);
+    return username === user?.username;
   };
 
   if (loading) {
@@ -101,7 +140,9 @@ const ProductList: React.FC = () => {
                 <th>Price</th>
                 <th>Stock Count</th>
                 <th>Created</th>
+                <th>Created By</th>
                 <th>Updated</th>
+                <th>Updated By</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -113,7 +154,21 @@ const ProductList: React.FC = () => {
                   <td>{formatPrice(product.price)}</td>
                   <td>{product.stockCount}</td>
                   <td>{formatDate(product.createdAt)}</td>
+                  <td>
+                    <span 
+                      className={`user-badge ${isCurrentUser(product.createdBy) ? 'current-user' : ''}`}
+                    >
+                      {getUsernameDisplay(product.createdBy)}
+                    </span>
+                  </td>
                   <td>{formatDate(product.updatedAt)}</td>
+                  <td>
+                    <span 
+                      className={`user-badge ${isCurrentUser(product.updatedBy) ? 'current-user' : ''}`}
+                    >
+                      {getUsernameDisplay(product.updatedBy)}
+                    </span>
+                  </td>
                   <td>
                     <div className="action-buttons">
                       <button
