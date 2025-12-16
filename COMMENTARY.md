@@ -87,3 +87,17 @@ It failed to update the database with the necessary column, however it did somew
 
 I was interested to see how it handled a new field as obviously old data will not contain this entry. What it did was apply a default of 0 in the table definition. This is one of those decisions that im very concerned about AI making, its something that should require thought. In this instance it could be correct however so ill defer some judgement there. The other aspect of this is that i as a developer should be thinking about this and guiding it but this is easily a thing i might miss when developing a new feature and if i dont pay close enough attention then i may not think about it, where as if i built this myself i would forcibly run into it. Also im not 100% sure how much the LLM makes me if i have to think about things to this sort of granularity, which is my main concern with the technology in general if im honest but again i digress.
 
+## Update 7
+While creating the last update i noticed an issue. Earlier i hinted that there is no method for evolving data, i never told it to create a method for evolving data so im going to acknowledge that i am likely hitting a limit of this things capabilities now.
+
+As such told it to use flyway for migrations so we dont have this issue.
+
+One oddity here. It asked me to create a directory as part of this change
+```
+mkdir -p <project base>/backend/src/main/resources/db/migration
+```
+Really not sure why it asked me to do this. It seems to have no issues creating other directories. Not a big issue but feels a little scuffed.
+
+Another oddity. It split the creation of the users table and the products table into 2 different migration files. Again, not a huge deal but a little scuffed.
+
+Other than that things went relatively smoothly

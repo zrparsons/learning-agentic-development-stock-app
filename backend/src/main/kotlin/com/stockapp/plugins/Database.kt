@@ -1,17 +1,11 @@
 package com.stockapp.plugins
 
 import com.stockapp.database.DatabaseConfig
-import com.stockapp.database.Products
-import com.stockapp.database.Users
+import com.stockapp.database.FlywayConfig
 import io.ktor.server.application.Application
-import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.transactions.transaction
 
 fun Application.configureDatabase() {
     DatabaseConfig.init()
-    
-    transaction {
-        SchemaUtils.createMissingTablesAndColumns(Users, Products)
-    }
+    FlywayConfig.migrate()
 }
 

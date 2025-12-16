@@ -27,6 +27,10 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-java-time:0.44.1")
     implementation("org.postgresql:postgresql:42.6.0")
     
+    // Database Migrations
+    implementation("org.flywaydb:flyway-core:10.0.0")
+    implementation("org.flywaydb:flyway-database-postgresql:10.0.0")
+    
     // Password hashing
     implementation("org.mindrot:jbcrypt:0.4")
     
