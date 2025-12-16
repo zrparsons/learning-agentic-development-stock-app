@@ -1,9 +1,16 @@
 package com.stockapp.services
 
 import com.stockapp.database.Products
-import com.stockapp.models.*
-import org.jetbrains.exposed.sql.*
+import com.stockapp.models.Product
+import com.stockapp.models.ProductCreateRequestInternal
+import com.stockapp.models.ProductUpdateRequestInternal
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.deleteWhere
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.update
 import java.time.LocalDateTime
 import java.util.UUID
 

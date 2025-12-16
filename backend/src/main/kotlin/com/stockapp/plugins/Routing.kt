@@ -4,8 +4,8 @@ import com.stockapp.routes.authRoutes
 import com.stockapp.routes.productRoutes
 import com.stockapp.services.AuthService
 import com.stockapp.services.ProductService
-import io.ktor.server.application.*
-import io.ktor.server.routing.*
+import io.ktor.server.application.Application
+import io.ktor.server.routing.routing
 
 fun Application.configureRouting() {
     val authService = AuthService()

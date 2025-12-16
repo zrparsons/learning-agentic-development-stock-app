@@ -1,11 +1,18 @@
 package com.stockapp.routes
 
-import com.stockapp.models.*
+import com.stockapp.models.AuthResponse
+import com.stockapp.models.ErrorResponse
+import com.stockapp.models.UserCreateRequest
+import com.stockapp.models.UserLoginRequest
+import com.stockapp.models.UserResponse
 import com.stockapp.services.AuthService
-import io.ktor.server.application.*
-import io.ktor.server.request.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
+import io.ktor.http.HttpStatusCode
+import io.ktor.server.application.call
+import io.ktor.server.request.receive
+import io.ktor.server.response.respond
+import io.ktor.server.routing.Route
+import io.ktor.server.routing.post
+import io.ktor.server.routing.route
 
 fun Route.authRoutes(authService: AuthService) {
     route("/api/auth") {
@@ -15,7 +22,7 @@ fun Route.authRoutes(authService: AuthService) {
                 
                 if (request.username.isBlank() || request.email.isBlank() || request.password.isBlank()) {
                     call.respond(
-                        io.ktor.http.HttpStatusCode.BadRequest,
+                        HttpStatusCode.BadRequest,
                         ErrorResponse("Username, email, and password are required")
                     )
                     return@post
@@ -25,7 +32,7 @@ fun Route.authRoutes(authService: AuthService) {
                 result.fold(
                     onSuccess = { user ->
                         call.respond(
-                            io.ktor.http.HttpStatusCode.Created,
+                            HttpStatusCode.Created,
                             UserResponse(
                                 id = user.id.toString(),
                                 username = user.username,
@@ -35,14 +42,14 @@ fun Route.authRoutes(authService: AuthService) {
                     },
                     onFailure = { error ->
                         call.respond(
-                            io.ktor.http.HttpStatusCode.BadRequest,
+                            HttpStatusCode.BadRequest,
                             ErrorResponse(error.message ?: "Registration failed")
                         )
                     }
                 )
             } catch (e: Exception) {
                 call.respond(
-                    io.ktor.http.HttpStatusCode.BadRequest,
+                    HttpStatusCode.BadRequest,
                     ErrorResponse("Invalid request: ${e.message}")
                 )
             }
@@ -54,7 +61,7 @@ fun Route.authRoutes(authService: AuthService) {
                 
                 if (request.email.isBlank() || request.password.isBlank()) {
                     call.respond(
-                        io.ktor.http.HttpStatusCode.BadRequest,
+                        HttpStatusCode.BadRequest,
                         ErrorResponse("Email and password are required")
                     )
                     return@post
@@ -71,18 +78,18 @@ fun Route.authRoutes(authService: AuthService) {
                                 email = authResponse.user.email
                             )
                         )
-                        call.respond(io.ktor.http.HttpStatusCode.OK, response)
+                        call.respond(HttpStatusCode.OK, response)
                     },
                     onFailure = { error ->
                         call.respond(
-                            io.ktor.http.HttpStatusCode.Unauthorized,
+                            HttpStatusCode.Unauthorized,
                             ErrorResponse(error.message ?: "Login failed")
                         )
                     }
                 )
             } catch (e: Exception) {
                 call.respond(
-                    io.ktor.http.HttpStatusCode.BadRequest,
+                    HttpStatusCode.BadRequest,
                     ErrorResponse("Invalid request: ${e.message}")
                 )
             }

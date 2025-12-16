@@ -1,12 +1,21 @@
 package com.stockapp.routes
 
-import com.stockapp.models.*
+import com.stockapp.models.ErrorResponse
+import com.stockapp.models.ProductCreateRequest
+import com.stockapp.models.ProductResponse
+import com.stockapp.models.ProductUpdateRequest
 import com.stockapp.services.ProductService
-import io.ktor.server.application.*
-import io.ktor.server.auth.*
-import io.ktor.server.request.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
+import io.ktor.http.HttpStatusCode
+import io.ktor.server.application.call
+import io.ktor.server.auth.authenticate
+import io.ktor.server.request.receive
+import io.ktor.server.response.respond
+import io.ktor.server.routing.Route
+import io.ktor.server.routing.delete
+import io.ktor.server.routing.get
+import io.ktor.server.routing.post
+import io.ktor.server.routing.put
+import io.ktor.server.routing.route
 import java.util.UUID
 
 fun Route.productRoutes(productService: ProductService) {
@@ -27,7 +36,7 @@ fun Route.productRoutes(productService: ProductService) {
                     })
                 } catch (e: Exception) {
                     call.respond(
-                        io.ktor.http.HttpStatusCode.InternalServerError,
+                        HttpStatusCode.InternalServerError,
                         ErrorResponse("Failed to fetch products: ${e.message}")
                     )
                 }
@@ -41,7 +50,7 @@ fun Route.productRoutes(productService: ProductService) {
                     val product = productService.getProductById(productId)
                     if (product == null) {
                         call.respond(
-                            io.ktor.http.HttpStatusCode.NotFound,
+                            HttpStatusCode.NotFound,
                             ErrorResponse("Product not found")
                         )
                         return@get
@@ -59,12 +68,12 @@ fun Route.productRoutes(productService: ProductService) {
                     )
                 } catch (e: IllegalArgumentException) {
                     call.respond(
-                        io.ktor.http.HttpStatusCode.BadRequest,
+                        HttpStatusCode.BadRequest,
                         ErrorResponse("Invalid product ID: ${e.message}")
                     )
                 } catch (e: Exception) {
                     call.respond(
-                        io.ktor.http.HttpStatusCode.InternalServerError,
+                        HttpStatusCode.InternalServerError,
                         ErrorResponse("Failed to fetch product: ${e.message}")
                     )
                 }
@@ -76,7 +85,7 @@ fun Route.productRoutes(productService: ProductService) {
                     
                     if (request.name.isBlank() || request.description.isBlank()) {
                         call.respond(
-                            io.ktor.http.HttpStatusCode.BadRequest,
+                            HttpStatusCode.BadRequest,
                             ErrorResponse("Name and description are required")
                         )
                         return@post
@@ -84,7 +93,7 @@ fun Route.productRoutes(productService: ProductService) {
                     
                     if (request.price < 0) {
                         call.respond(
-                            io.ktor.http.HttpStatusCode.BadRequest,
+                            HttpStatusCode.BadRequest,
                             ErrorResponse("Price must be non-negative")
                         )
                         return@post
@@ -100,7 +109,7 @@ fun Route.productRoutes(productService: ProductService) {
                     result.fold(
                         onSuccess = { product ->
                             call.respond(
-                                io.ktor.http.HttpStatusCode.Created,
+                                HttpStatusCode.Created,
                                 ProductResponse(
                                     id = product.id.toString(),
                                     name = product.name,
@@ -113,14 +122,14 @@ fun Route.productRoutes(productService: ProductService) {
                         },
                         onFailure = { error ->
                             call.respond(
-                                io.ktor.http.HttpStatusCode.BadRequest,
+                                HttpStatusCode.BadRequest,
                                 ErrorResponse(error.message ?: "Failed to create product")
                             )
                         }
                     )
                 } catch (e: Exception) {
                     call.respond(
-                        io.ktor.http.HttpStatusCode.BadRequest,
+                        HttpStatusCode.BadRequest,
                         ErrorResponse("Invalid request: ${e.message}")
                     )
                 }
@@ -135,7 +144,7 @@ fun Route.productRoutes(productService: ProductService) {
                     
                     if (request.name?.isBlank() == true || request.description?.isBlank() == true) {
                         call.respond(
-                            io.ktor.http.HttpStatusCode.BadRequest,
+                            HttpStatusCode.BadRequest,
                             ErrorResponse("Name and description cannot be blank")
                         )
                         return@put
@@ -143,7 +152,7 @@ fun Route.productRoutes(productService: ProductService) {
                     
                     if (request.price != null && request.price < 0) {
                         call.respond(
-                            io.ktor.http.HttpStatusCode.BadRequest,
+                            HttpStatusCode.BadRequest,
                             ErrorResponse("Price must be non-negative")
                         )
                         return@put
@@ -171,19 +180,19 @@ fun Route.productRoutes(productService: ProductService) {
                         },
                         onFailure = { error ->
                             call.respond(
-                                io.ktor.http.HttpStatusCode.NotFound,
+                                HttpStatusCode.NotFound,
                                 ErrorResponse(error.message ?: "Failed to update product")
                             )
                         }
                     )
                 } catch (e: IllegalArgumentException) {
                     call.respond(
-                        io.ktor.http.HttpStatusCode.BadRequest,
+                        HttpStatusCode.BadRequest,
                         ErrorResponse("Invalid product ID: ${e.message}")
                     )
                 } catch (e: Exception) {
                     call.respond(
-                        io.ktor.http.HttpStatusCode.BadRequest,
+                        HttpStatusCode.BadRequest,
                         ErrorResponse("Invalid request: ${e.message}")
                     )
                 }
@@ -197,23 +206,23 @@ fun Route.productRoutes(productService: ProductService) {
                     val result = productService.deleteProduct(productId)
                     result.fold(
                         onSuccess = {
-                            call.respond(io.ktor.http.HttpStatusCode.NoContent)
+                            call.respond(HttpStatusCode.NoContent)
                         },
                         onFailure = { error ->
                             call.respond(
-                                io.ktor.http.HttpStatusCode.NotFound,
+                                HttpStatusCode.NotFound,
                                 ErrorResponse(error.message ?: "Failed to delete product")
                             )
                         }
                     )
                 } catch (e: IllegalArgumentException) {
                     call.respond(
-                        io.ktor.http.HttpStatusCode.BadRequest,
+                        HttpStatusCode.BadRequest,
                         ErrorResponse("Invalid product ID: ${e.message}")
                     )
                 } catch (e: Exception) {
                     call.respond(
-                        io.ktor.http.HttpStatusCode.InternalServerError,
+                        HttpStatusCode.InternalServerError,
                         ErrorResponse("Failed to delete product: ${e.message}")
                     )
                 }

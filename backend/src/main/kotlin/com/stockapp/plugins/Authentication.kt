@@ -1,9 +1,13 @@
 package com.stockapp.plugins
 
+import com.auth0.jwt.JWT
+import com.auth0.jwt.algorithms.Algorithm
 import com.typesafe.config.ConfigFactory
-import io.ktor.server.application.*
-import io.ktor.server.auth.*
-import io.ktor.server.auth.jwt.*
+import io.ktor.server.application.Application
+import io.ktor.server.application.install
+import io.ktor.server.auth.Authentication
+import io.ktor.server.auth.jwt.JWTPrincipal
+import io.ktor.server.auth.jwt.jwt
 
 fun Application.configureAuthentication() {
     val config = ConfigFactory.load()
@@ -12,12 +16,12 @@ fun Application.configureAuthentication() {
     val jwtAudience = config.getString("ktor.security.jwt.audience")
     val jwtRealm = config.getString("ktor.security.jwt.realm")
     
-    authentication {
+    install(Authentication) {
         jwt("auth-jwt") {
             realm = jwtRealm
             verifier(
-                com.auth0.jwt.JWT
-                    .require(com.auth0.jwt.algorithms.Algorithm.HMAC256(jwtSecret))
+                JWT
+                    .require(Algorithm.HMAC256(jwtSecret))
                     .withAudience(jwtAudience)
                     .withIssuer(jwtIssuer)
                     .build()
