@@ -101,3 +101,19 @@ Really not sure why it asked me to do this. It seems to have no issues creating 
 Another oddity. It split the creation of the users table and the products table into 2 different migration files. Again, not a huge deal but a little scuffed.
 
 Other than that things went relatively smoothly
+
+## Update 8
+Tried to add created by and updated by functionality. The migration it wrote first failed because it added a non null column to a table that has existing records. Again this is probably me expecting too much from this thing i will remember to give it a default next time. When i pointed this out it tried to default all records to be created by and updated by the first user in the database. Which is slightly silly but again i didn't give it something to do so ill give it a pass.
+
+It also wrote some misleading comments in this migration:
+```
+-- Update existing products to use the first user in the system
+-- (or create a system/admin user if needed)
+UPDATE products
+SET created_by = (SELECT id FROM users ORDER BY created_at LIMIT 1),
+    updated_by = (SELECT id FROM users ORDER BY created_at LIMIT 1)
+WHERE created_by IS NULL;
+```
+Maybe that second comment is a recommendation for me but it does a poor job of explaining that.
+
+One of the strange things its telling me to do is to dropped the failed migration from the database. Which in my opinion is both uneccicary and a poor decision. That record is there to show a history of the migrations that this thing attempted to apply, we really should not be touching that. I guess it would be fine to do locally but it is also completely uneccicary to do locally so i don't like that recommendation.

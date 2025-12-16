@@ -20,6 +20,8 @@ object Products : Table("products") {
     val description = text("description")
     val price = decimal("price", 10, 2)
     val stockCount = integer("stock_count").default(0)
+    val createdBy = uuid("created_by").references(Users.id)
+    val updatedBy = uuid("updated_by").references(Users.id)
     val createdAt = datetime("created_at").default(LocalDateTime.now())
     val updatedAt = datetime("updated_at").default(LocalDateTime.now())
     

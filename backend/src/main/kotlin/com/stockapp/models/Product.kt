@@ -11,6 +11,8 @@ data class Product(
     val description: String,
     val price: BigDecimal,
     val stockCount: Int,
+    val createdBy: UUID,
+    val updatedBy: UUID,
     val createdAt: LocalDateTime,
     val updatedAt: LocalDateTime
 )
@@ -36,14 +38,16 @@ data class ProductCreateRequestInternal(
     val name: String,
     val description: String,
     val price: BigDecimal,
-    val stockCount: Int
+    val stockCount: Int,
+    val userId: UUID
 )
 
 data class ProductUpdateRequestInternal(
     val name: String? = null,
     val description: String? = null,
     val price: BigDecimal? = null,
-    val stockCount: Int? = null
+    val stockCount: Int? = null,
+    val userId: UUID
 )
 
 @Serializable
@@ -53,6 +57,8 @@ data class ProductResponse(
     val description: String,
     val price: Double,
     val stockCount: Int,
+    val createdBy: String,
+    val updatedBy: String,
     val createdAt: String,
     val updatedAt: String
 )

@@ -8,6 +8,8 @@ import com.stockapp.services.ProductService
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.call
 import io.ktor.server.auth.authenticate
+import io.ktor.server.auth.jwt.JWTPrincipal
+import io.ktor.server.auth.principal
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
@@ -31,6 +33,8 @@ fun Route.productRoutes(productService: ProductService) {
                             description = it.description,
                             price = it.price.toDouble(),
                             stockCount = it.stockCount,
+                            createdBy = it.createdBy.toString(),
+                            updatedBy = it.updatedBy.toString(),
                             createdAt = it.createdAt.toString(),
                             updatedAt = it.updatedAt.toString()
                         )
@@ -64,6 +68,8 @@ fun Route.productRoutes(productService: ProductService) {
                             description = product.description,
                             price = product.price.toDouble(),
                             stockCount = product.stockCount,
+                            createdBy = product.createdBy.toString(),
+                            updatedBy = product.updatedBy.toString(),
                             createdAt = product.createdAt.toString(),
                             updatedAt = product.updatedAt.toString()
                         )
@@ -83,6 +89,11 @@ fun Route.productRoutes(productService: ProductService) {
             
             post {
                 try {
+                    val principal = call.principal<JWTPrincipal>()
+                    val userIdString = principal?.payload?.getClaim("userId")?.asString()
+                        ?: throw Exception("User ID not found in token")
+                    val userId = UUID.fromString(userIdString)
+                    
                     val request = call.receive<ProductCreateRequest>()
                     
                     if (request.name.isBlank() || request.description.isBlank()) {
@@ -113,7 +124,8 @@ fun Route.productRoutes(productService: ProductService) {
                         name = request.name,
                         description = request.description,
                         price = java.math.BigDecimal.valueOf(request.price),
-                        stockCount = request.stockCount
+                        stockCount = request.stockCount,
+                        userId = userId
                     )
                     
                     val result = productService.createProduct(createRequest)
@@ -127,6 +139,8 @@ fun Route.productRoutes(productService: ProductService) {
                                     description = product.description,
                                     price = product.price.toDouble(),
                                     stockCount = product.stockCount,
+                                    createdBy = product.createdBy.toString(),
+                                    updatedBy = product.updatedBy.toString(),
                                     createdAt = product.createdAt.toString(),
                                     updatedAt = product.updatedAt.toString()
                                 )
@@ -149,6 +163,11 @@ fun Route.productRoutes(productService: ProductService) {
             
             put("{id}") {
                 try {
+                    val principal = call.principal<JWTPrincipal>()
+                    val userIdString = principal?.payload?.getClaim("userId")?.asString()
+                        ?: throw Exception("User ID not found in token")
+                    val userId = UUID.fromString(userIdString)
+                    
                     val id = call.parameters["id"] ?: throw Exception("Product ID is required")
                     val productId = UUID.fromString(id)
                     
@@ -182,7 +201,8 @@ fun Route.productRoutes(productService: ProductService) {
                         name = request.name,
                         description = request.description,
                         price = request.price?.let { java.math.BigDecimal.valueOf(it) },
-                        stockCount = request.stockCount
+                        stockCount = request.stockCount,
+                        userId = userId
                     )
                     
                     val result = productService.updateProduct(productId, updateRequest)
@@ -195,6 +215,8 @@ fun Route.productRoutes(productService: ProductService) {
                                     description = product.description,
                                     price = product.price.toDouble(),
                                     stockCount = product.stockCount,
+                                    createdBy = product.createdBy.toString(),
+                                    updatedBy = product.updatedBy.toString(),
                                     createdAt = product.createdAt.toString(),
                                     updatedAt = product.updatedAt.toString()
                                 )
