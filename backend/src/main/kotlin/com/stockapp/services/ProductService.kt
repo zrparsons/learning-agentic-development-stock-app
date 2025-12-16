@@ -24,6 +24,7 @@ class ProductService {
                         name = row[Products.name],
                         description = row[Products.description],
                         price = row[Products.price],
+                        stockCount = row[Products.stockCount],
                         createdAt = row[Products.createdAt],
                         updatedAt = row[Products.updatedAt]
                     )
@@ -40,6 +41,7 @@ class ProductService {
                         name = row[Products.name],
                         description = row[Products.description],
                         price = row[Products.price],
+                        stockCount = row[Products.stockCount],
                         createdAt = row[Products.createdAt],
                         updatedAt = row[Products.updatedAt]
                     )
@@ -56,6 +58,7 @@ class ProductService {
                     it[Products.name] = request.name
                     it[Products.description] = request.description
                     it[Products.price] = request.price
+                    it[Products.stockCount] = request.stockCount
                 }
                 
                 val product = Products.select { Products.id eq productId }.map { row ->
@@ -64,6 +67,7 @@ class ProductService {
                         name = row[Products.name],
                         description = row[Products.description],
                         price = row[Products.price],
+                        stockCount = row[Products.stockCount],
                         createdAt = row[Products.createdAt],
                         updatedAt = row[Products.updatedAt]
                     )
@@ -89,6 +93,7 @@ class ProductService {
                     request.name?.let { name -> it[Products.name] = name }
                     request.description?.let { description -> it[Products.description] = description }
                     request.price?.let { price -> it[Products.price] = price }
+                    request.stockCount?.let { stockCount -> it[Products.stockCount] = stockCount }
                     it[Products.updatedAt] = LocalDateTime.now()
                 }
                 
@@ -98,6 +103,7 @@ class ProductService {
                         name = row[Products.name],
                         description = row[Products.description],
                         price = row[Products.price],
+                        stockCount = row[Products.stockCount],
                         createdAt = row[Products.createdAt],
                         updatedAt = row[Products.updatedAt]
                     )

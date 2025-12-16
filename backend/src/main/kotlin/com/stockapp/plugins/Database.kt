@@ -11,7 +11,7 @@ fun Application.configureDatabase() {
     DatabaseConfig.init()
     
     transaction {
-        SchemaUtils.create(Users, Products)
+        SchemaUtils.createMissingTablesAndColumns(Users, Products)
     }
 }
 

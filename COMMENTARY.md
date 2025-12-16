@@ -79,3 +79,11 @@ I gave it the compilation error and it babbled some nonsense about the method be
 Im finding that one commit per prompt doesn't really work, the LLM needs much more hand holding than 1 or 2 prompts per operation so im moving to a an update every commit.
 
 this commit simply forces the LLM to not use wildcard imports and that seems to fix its issues with forgetting or hallucinating imports.
+
+## Update 6
+I got it to update the products to contain a stock count. I did this without a plan as i wanted to test how far it could go and it did not do to well.
+
+It failed to update the database with the necessary column, however it did somewhat impressively sort that out once i have it the error message.
+
+I was interested to see how it handled a new field as obviously old data will not contain this entry. What it did was apply a default of 0 in the table definition. This is one of those decisions that im very concerned about AI making, its something that should require thought. In this instance it could be correct however so ill defer some judgement there. The other aspect of this is that i as a developer should be thinking about this and guiding it but this is easily a thing i might miss when developing a new feature and if i dont pay close enough attention then i may not think about it, where as if i built this myself i would forcibly run into it. Also im not 100% sure how much the LLM makes me if i have to think about things to this sort of granularity, which is my main concern with the technology in general if im honest but again i digress.
+

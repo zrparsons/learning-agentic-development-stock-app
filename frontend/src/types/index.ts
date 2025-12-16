@@ -14,6 +14,7 @@ export interface Product {
   name: string;
   description: string;
   price: number;
+  stockCount: number;
   createdAt: string;
   updatedAt: string;
   userId: string;
@@ -23,12 +24,14 @@ export interface ProductCreateRequest {
   name: string;
   description: string;
   price: number;
+  stockCount?: number;
 }
 
 export interface ProductUpdateRequest {
   name?: string;
   description?: string;
   price?: number;
+  stockCount?: number;
 }
 
 export interface ErrorResponse {

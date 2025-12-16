@@ -99,6 +99,7 @@ const ProductList: React.FC = () => {
                 <th>Name</th>
                 <th>Description</th>
                 <th>Price</th>
+                <th>Stock Count</th>
                 <th>Created</th>
                 <th>Updated</th>
                 <th>Actions</th>
@@ -110,6 +111,7 @@ const ProductList: React.FC = () => {
                   <td>{product.name}</td>
                   <td className="description-cell">{product.description}</td>
                   <td>{formatPrice(product.price)}</td>
+                  <td>{product.stockCount}</td>
                   <td>{formatDate(product.createdAt)}</td>
                   <td>{formatDate(product.updatedAt)}</td>
                   <td>

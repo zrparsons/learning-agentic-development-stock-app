@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { AuthResponse, Product, ProductCreateRequest, ProductUpdateRequest, ErrorResponse } from '../types';
+import type { AuthResponse, Product, ProductCreateRequest, ProductUpdateRequest, ErrorResponse, User } from '../types';
 
 const API_BASE_URL = '/api';
 

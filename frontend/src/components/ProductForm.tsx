@@ -12,6 +12,7 @@ const ProductForm: React.FC = () => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
+  const [stockCount, setStockCount] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -28,6 +29,7 @@ const ProductForm: React.FC = () => {
       setName(product.name);
       setDescription(product.description);
       setPrice(product.price.toString());
+      setStockCount(product.stockCount.toString());
     } catch (err: any) {
       setError(err.response?.data?.error || 'Failed to load product');
     } finally {
@@ -47,18 +49,27 @@ const ProductForm: React.FC = () => {
       return;
     }
 
+    const stockCountNum = stockCount ? parseInt(stockCount, 10) : 0;
+    if (stockCount && (isNaN(stockCountNum) || stockCountNum < 0)) {
+      setError('Stock count must be a valid non-negative integer');
+      setLoading(false);
+      return;
+    }
+
     try {
       if (isEdit && id) {
         await productAPI.update(id, {
           name,
           description,
           price: priceNum,
+          stockCount: stockCountNum,
         });
       } else {
         await productAPI.create({
           name,
           description,
           price: priceNum,
+          stockCount: stockCountNum,
         });
       }
       navigate('/products');
@@ -119,6 +130,19 @@ const ProductForm: React.FC = () => {
               placeholder="0.00"
               min="0"
               step="0.01"
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="stockCount">Stock Count</label>
+            <input
+              type="number"
+              id="stockCount"
+              value={stockCount}
+              onChange={(e) => setStockCount(e.target.value)}
+              disabled={loading}
+              placeholder="0"
+              min="0"
+              step="1"
             />
           </div>
           <div className="form-actions">

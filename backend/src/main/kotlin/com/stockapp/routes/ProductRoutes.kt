@@ -30,6 +30,7 @@ fun Route.productRoutes(productService: ProductService) {
                             name = it.name,
                             description = it.description,
                             price = it.price.toDouble(),
+                            stockCount = it.stockCount,
                             createdAt = it.createdAt.toString(),
                             updatedAt = it.updatedAt.toString()
                         )
@@ -62,6 +63,7 @@ fun Route.productRoutes(productService: ProductService) {
                             name = product.name,
                             description = product.description,
                             price = product.price.toDouble(),
+                            stockCount = product.stockCount,
                             createdAt = product.createdAt.toString(),
                             updatedAt = product.updatedAt.toString()
                         )
@@ -99,10 +101,19 @@ fun Route.productRoutes(productService: ProductService) {
                         return@post
                     }
                     
+                    if (request.stockCount < 0) {
+                        call.respond(
+                            HttpStatusCode.BadRequest,
+                            ErrorResponse("Stock count must be non-negative")
+                        )
+                        return@post
+                    }
+                    
                     val createRequest = com.stockapp.models.ProductCreateRequestInternal(
                         name = request.name,
                         description = request.description,
-                        price = java.math.BigDecimal.valueOf(request.price)
+                        price = java.math.BigDecimal.valueOf(request.price),
+                        stockCount = request.stockCount
                     )
                     
                     val result = productService.createProduct(createRequest)
@@ -115,6 +126,7 @@ fun Route.productRoutes(productService: ProductService) {
                                     name = product.name,
                                     description = product.description,
                                     price = product.price.toDouble(),
+                                    stockCount = product.stockCount,
                                     createdAt = product.createdAt.toString(),
                                     updatedAt = product.updatedAt.toString()
                                 )
@@ -158,10 +170,19 @@ fun Route.productRoutes(productService: ProductService) {
                         return@put
                     }
                     
+                    if (request.stockCount != null && request.stockCount < 0) {
+                        call.respond(
+                            HttpStatusCode.BadRequest,
+                            ErrorResponse("Stock count must be non-negative")
+                        )
+                        return@put
+                    }
+                    
                     val updateRequest = com.stockapp.models.ProductUpdateRequestInternal(
                         name = request.name,
                         description = request.description,
-                        price = request.price?.let { java.math.BigDecimal.valueOf(it) }
+                        price = request.price?.let { java.math.BigDecimal.valueOf(it) },
+                        stockCount = request.stockCount
                     )
                     
                     val result = productService.updateProduct(productId, updateRequest)
@@ -173,6 +194,7 @@ fun Route.productRoutes(productService: ProductService) {
                                     name = product.name,
                                     description = product.description,
                                     price = product.price.toDouble(),
+                                    stockCount = product.stockCount,
                                     createdAt = product.createdAt.toString(),
                                     updatedAt = product.updatedAt.toString()
                                 )
