@@ -132,3 +132,6 @@ Adding the previous created by and updated by functionality to the frontend. Had
 Looking at the auth provider with fresh eyes on a new day. we shouldn't be loading credentials in a use effect, thats whats silly. It should be loading the credentials inside the provider and using them to initialize the state.
 
 It did a decent job of fixing this, however instead of removing the isLoading state it kept it and hard locked it to false which is super scuffed. It fixed it when asked but still strange. I am amazed both by the things the model is able to get correct and by the things the model can get wrong, its very odd.
+
+## Update 12
+Asked it to add plus and minus buttons to the stock counter. it did a pretty good job of this with the notable exception that its kinda weird about managing state. it is setting the state once before the request, doing the request, then setting the state again. it also has a catch to reset the state if it fails. wildly complicated for a simple operation but not a huge deal.

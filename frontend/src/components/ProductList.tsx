@@ -68,6 +68,36 @@ const ProductList: React.FC = () => {
     }
   };
 
+  const handleStockChange = async (id: string, currentStock: number, delta: number) => {
+    const newStock = currentStock + delta;
+    
+    if (newStock < 0) {
+      alert('Stock count cannot be negative');
+      return;
+    }
+
+    try {
+      // Optimistic update
+      setProducts(products.map(p => 
+        p.id === id ? { ...p, stockCount: newStock } : p
+      ));
+
+      // Update on server
+      const updatedProduct = await productAPI.update(id, { stockCount: newStock });
+      
+      // Update with server response
+      setProducts(products.map(p => 
+        p.id === id ? updatedProduct : p
+      ));
+    } catch (err: any) {
+      // Revert on error
+      setProducts(products.map(p => 
+        p.id === id ? { ...p, stockCount: currentStock } : p
+      ));
+      alert(err.response?.data?.error || 'Failed to update stock count');
+    }
+  };
+
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -152,7 +182,25 @@ const ProductList: React.FC = () => {
                   <td>{product.name}</td>
                   <td className="description-cell">{product.description}</td>
                   <td>{formatPrice(product.price)}</td>
-                  <td>{product.stockCount}</td>
+                  <td>
+                    <div className="stock-controls">
+                      <button
+                        onClick={() => handleStockChange(product.id, product.stockCount, -1)}
+                        className="btn btn-stock btn-decrement"
+                        title="Decrease stock"
+                      >
+                        −
+                      </button>
+                      <span className="stock-count">{product.stockCount}</span>
+                      <button
+                        onClick={() => handleStockChange(product.id, product.stockCount, 1)}
+                        className="btn btn-stock btn-increment"
+                        title="Increase stock"
+                      >
+                        +
+                      </button>
+                    </div>
+                  </td>
                   <td>{formatDate(product.createdAt)}</td>
                   <td>
                     <span 
