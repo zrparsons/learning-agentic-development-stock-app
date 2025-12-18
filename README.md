@@ -6,9 +6,12 @@ A full-stack product catalog application built with Kotlin (Ktor) backend, React
 
 - User authentication (register/login) with JWT tokens
 - Product CRUD operations (Create, Read, Update, Delete)
+- Stock count management with increment/decrement buttons
 - Secure API endpoints with authentication middleware
 - Modern React UI with TypeScript
 - PostgreSQL database with Exposed ORM
+- Database migration support with Flyway
+- Test data seeding scripts
 
 ## Tech Stack
 
@@ -47,7 +50,27 @@ This will start a PostgreSQL container on port 5432 with:
 - User: `stockapp`
 - Password: `stockapp`
 
-### 2. Backend Setup
+### 2. Load Test Data (Optional)
+
+To populate the database with test users and products, run the seed script:
+
+**On macOS/Linux:**
+```bash
+./seed-database.sh
+```
+
+**On Windows:**
+```bash
+seed-database.bat
+```
+
+This will create:
+- 3 test users (alice, bob, charlie) with password: `password123`
+- 20 sample products across various categories
+
+You can skip this step and create your own users/products through the application.
+
+### 3. Backend Setup
 
 Navigate to the backend directory:
 
@@ -69,7 +92,7 @@ gradlew.bat run
 
 The backend will start on `http://localhost:8080`
 
-### 3. Frontend Setup
+### 4. Frontend Setup
 
 Navigate to the frontend directory:
 
@@ -90,6 +113,16 @@ npm run dev
 ```
 
 The frontend will start on `http://localhost:3000`
+
+## Test Credentials
+
+If you ran the seed script, you can login with these test accounts:
+
+| Email | Password | Username |
+|-------|----------|----------|
+| alice@example.com | password123 | alice |
+| bob@example.com | password123 | bob |
+| charlie@example.com | password123 | charlie |
 
 ## API Endpoints
 
@@ -146,7 +179,10 @@ stock-app/
 │   │   └── plugins/                 # Ktor plugins
 │   ├── build.gradle.kts            # Gradle build config
 │   └── resources/
-│       └── application.conf        # Application config
+│       ├── application.conf        # Application config
+│       └── db/
+│           ├── migration/          # Flyway migrations
+│           └── seed/               # Test data seeds
 ├── frontend/
 │   ├── src/
 │   │   ├── components/             # React components
@@ -156,6 +192,8 @@ stock-app/
 │   │   └── App.tsx                 # Main app component
 │   └── package.json
 ├── docker-compose.yml              # PostgreSQL setup
+├── seed-database.sh                # Test data loader (Unix)
+├── seed-database.bat               # Test data loader (Windows)
 └── README.md
 ```
 
@@ -182,9 +220,20 @@ Edit `backend/resources/application.conf` to change:
 
 The frontend is configured to proxy API requests to `http://localhost:8080` via Vite's proxy settings in `vite.config.ts`.
 
+## Database Seeding
+
+The test data includes:
+- **3 test users** with realistic profiles
+- **20 sample products** across categories (Electronics, Office Supplies, Audio, Smart Home, Gaming)
+- Products with varying stock levels (including out-of-stock items)
+- Realistic timestamps and audit trails
+
+See `backend/src/main/resources/db/seed/README.md` for detailed information about the test data.
+
 ## Notes
 
 - The JWT secret in `application.conf` should be changed in production
 - Database credentials in `docker-compose.yml` should be changed for production
-- The application creates database tables automatically on first run
+- The application creates database tables automatically on first run using Flyway migrations
+- Test data can be loaded at any time using the seed scripts
 

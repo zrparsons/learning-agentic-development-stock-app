@@ -135,3 +135,6 @@ It did a decent job of fixing this, however instead of removing the isLoading st
 
 ## Update 12
 Asked it to add plus and minus buttons to the stock counter. it did a pretty good job of this with the notable exception that its kinda weird about managing state. it is setting the state once before the request, doing the request, then setting the state again. it also has a catch to reset the state if it fails. wildly complicated for a simple operation but not a huge deal.
+
+## Update 13
+Asked it to generate some test data, which again, it did pretty well but generated accounts with the wrong hash and cannot be logged into.
