@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { productAPI } from '../services/api';
-import type { Product } from '../types';
 import './ProductForm.css';
 
 const ProductForm: React.FC = () => {

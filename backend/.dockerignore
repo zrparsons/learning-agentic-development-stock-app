@@ -1,0 +1,27 @@
+# Build outputs
+build/
+.gradle/
+bin/
+out/
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+.classpath
+.project
+.settings/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Logs
+*.log
+
+# Test files
+*.test

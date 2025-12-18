@@ -1,0 +1,28 @@
+# Example Terraform variables file
+# Copy this file to terraform.tfvars and fill in your values
+
+# Path to your kubeconfig file
+kubeconfig_path = "~/.kube/config"
+
+# Kubernetes namespace (default: stock-app)
+namespace = "stock-app"
+
+# Docker images (replace <registry> with your actual registry)
+backend_image  = "<registry>/stock-app-backend:latest"
+frontend_image = "<registry>/stock-app-frontend:latest"
+
+# PostgreSQL configuration
+postgres_image = "postgres:15"
+db_name        = "stockapp"
+db_user        = "stockapp"
+db_password    = "your-secure-database-password"
+
+# JWT secret for authentication
+jwt_secret = "your-secure-jwt-secret-key-change-in-production"
+
+# Environment
+environment = "dev"
+
+# Replica counts
+backend_replicas  = 2
+frontend_replicas = 2

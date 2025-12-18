@@ -2,6 +2,7 @@ plugins {
     kotlin("jvm") version "1.9.20"
     application
     kotlin("plugin.serialization") version "1.9.20"
+    id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 group = "com.stockapp"
@@ -50,5 +51,21 @@ application {
 
 tasks.named<JavaExec>("run") {
     standardInput = System.`in`
+}
+
+tasks {
+    shadowJar {
+        archiveBaseName.set("app")
+        archiveClassifier.set("")
+        archiveVersion.set("")
+        mergeServiceFiles()
+        manifest {
+            attributes["Main-Class"] = "com.stockapp.ApplicationKt"
+        }
+    }
+    
+    build {
+        dependsOn(shadowJar)
+    }
 }
 

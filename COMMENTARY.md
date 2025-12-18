@@ -132,3 +132,22 @@ Adding the previous created by and updated by functionality to the frontend. Had
 Looking at the auth provider with fresh eyes on a new day. we shouldn't be loading credentials in a use effect, thats whats silly. It should be loading the credentials inside the provider and using them to initialize the state.
 
 It did a decent job of fixing this, however instead of removing the isLoading state it kept it and hard locked it to false which is super scuffed. It fixed it when asked but still strange. I am amazed both by the things the model is able to get correct and by the things the model can get wrong, its very odd.
+
+## Update 12
+I asked it to generate terraform to deploy this application to a kubernetes cluster.
+
+Kinda impressed with the questions it asked about how everything should be deployed and the plan it generated was surprisingly reasonable. however It mentions using ngix for the frontend and having it proxy to the backend at `/api` which is good but it also mentions exposing port 3000 which i believe is incorrect as i think its getting confused with what vite does.
+
+After generating a reasonable looking terraform project it generated a frankly ridiculous amount of documentation, including a few hundred lines of troubleshooting information which is not something i would find uneccicary on a project like this but potentially this is for added context.
+
+Going step by step through the things it generated also yielded some less than stellar results:
+- The backend docker file was trying to import a settings.gradle that didn't exist
+- The backend docker file was using an image that didn't run on apple silicon (not a huge deal as i didn't tell it that it needed to)
+- The backend docker file had this completely nonsense command `COPY --from=build /app/build/libs/*.jar app.jar`
+- The backend docker file was trying to access a fat jar that was not generated anywhere.
+- Terraform uses 
+- It used a volume claim that my cluster (and i believe most clusters) do not support by default, it did this without telling me or putting anything in the docs.
+
+Most of the above it was able to fix but this process took quite a lot of time.
+
+One positive comment, i had to add a custom registry to pull the images from the containers and the autocomplete made this a lot more ergonomic
